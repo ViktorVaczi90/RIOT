@@ -4,8 +4,8 @@ export CPU_MODEL = cc430f5137
 
 # flasher configuration
 export OFLAGS = -O ihex
-export FLASHER = mspdebug
-export FFLAGS = rf2500 "prog $(HEXFILE)"
+export FLASHER =java -jar ~/.arduino15/packages/panstamp_nrg/tools/java-bsl/1.0.0/BsLoader.jar
+export FFLAGS = $(HEXFILE) /dev/ttyUSB0 --verif-off --verbose-off
 
 # include msp430 base makefile
 include $(RIOTBOARD)/Makefile.include.msp430_common
