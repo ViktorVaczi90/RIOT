@@ -76,36 +76,14 @@ void cc430_cpu_init(void)
     PMAPPWD = 0x02D52;
     // Allow reconfiguration during runtime:
     PMAPCTL = PMAPRECFG;
-
-    /*// P2.7 = TA0CCR1A or TA1CCR0A output (buzzer output)
-    ptr  = &P2MAP0;
-    *(ptr + 7) = PM_TA1CCR0A;
-    P2OUT &= ~BIT7;
-    P2DIR |= BIT7;
-
-    // P1.5 = SPI MISO input
-    ptr  = &P1MAP0;
-    *(ptr + 5) = PM_UCA0SOMI;
-    // P1.6 = SPI MOSI output
-    *(ptr + 6) = PM_UCA0SIMO;
-    // P1.7 = SPI CLK output
-    *(ptr + 7) = PM_UCA0CLK;*/
-
     // Disable write-access to port mapping registers:
     PMAPPWD = 0;
     // Re-enable all interrupts
     enableIRQ();
-
 }
 
 void board_init(void)
 {
-    cc430_cpu_init();
-uart_stdio_init();
-
-__bis_SR_register(GIE);
-
-    //lcd_init();
-   // init_display_putchar();
-    //DEBUG("DISP OK");
+	cc430_cpu_init();
+	uart_stdio_init();
 }
