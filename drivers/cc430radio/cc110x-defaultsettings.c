@@ -8,7 +8,7 @@
  */
 
 /**
- * @ingroup   drivers_cc110x
+ * @ingroup   drivers_cc430radio
  * @{
  *
  * @file
@@ -22,14 +22,14 @@
  */
 
 #include "board.h"
-#include "cc110x.h"
+#include "cc430radio.h"
 
 /**
  * @brief   PATABLE with available output powers
  * @note    If changed in size, adjust MAX_OUTPUT_POWER definition
  *          in CC110x interface
 */
-const char cc110x_default_pa_table[8] = {
+const char cc430radio_default_pa_table[8] = {
     0x00,   /*< -52 dBm */
     0x0D,   /*< -20 dBm */
     0x34,   /*< -10 dBm */
@@ -40,18 +40,18 @@ const char cc110x_default_pa_table[8] = {
     0xC3    /*< +10 dBm */
 };
 
-const char cc110x_default_base_freq[3] = { 0x21, 0x71, 0x7F };
+const char cc430radio_default_base_freq[3] = { 0x21, 0x71, 0x7F };
 
 /**
- * @brief cc110x default settings
+ * @brief cc430radio default settings
  */
-const char cc110x_default_conf[] = {
+const char cc430radio_default_conf[] = {
     0x06, /* IOCFG2 */
     0x2E, /* IOCFG1 */
-    /* some boards use cc110x' GDO0 as clock source, so for those, we allow
+    /* some boards use cc430radio' GDO0 as clock source, so for those, we allow
      * overriding of the corresponding setting, e.g., in board.h */
-#ifdef CC110X_IOCONF0_VAL
-    CC110X_IOCONF0_VAL,
+#ifdef CC430RADIO_IOCONF0_VAL
+    CC430RADIO_IOCONF0_VAL,
 #else
     0x0E, /* IOCFG0 */
 #endif
@@ -95,6 +95,6 @@ const char cc110x_default_conf[] = {
 };
 
 /**
- * @brief The size of the configuration array for CC110X in bytes
+ * @brief The size of the configuration array for CC430RADIO in bytes
  * */
-const uint8_t cc110x_default_conf_size = sizeof(cc110x_default_conf);
+const uint8_t cc430radio_default_conf_size = sizeof(cc430radio_default_conf);

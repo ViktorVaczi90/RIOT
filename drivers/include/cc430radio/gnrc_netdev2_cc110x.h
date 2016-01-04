@@ -7,39 +7,39 @@
  */
 
 /**
- * @ingroup   driver_cc110x
+ * @ingroup   driver_cc430radio
  * @{
  *
  * @file
- * @brief     cc110x gnrc glue code interface
+ * @brief     cc430radio gnrc glue code interface
  *
  * @author    Kaspar Schleiser <kaspar@schleiser.de>
  */
 
 #include "net/gnrc/gnrc_netdev2.h"
-#include "cc110x/cc110x-netdev2.h"
+#include "cc430radio/cc430radio-netdev2.h"
 
-#ifndef GNRC_CC110X_H
-#define GNRC_CC110X_H
+#ifndef GNRC_CC430RADIO_H
+#define GNRC_CC430RADIO_H
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 /**
- * @brief initialize cc110x gnrc glue code
+ * @brief initialize cc430radio gnrc glue code
  *
  * @param[in] gnrc_netdev2  gnrc_netdev2 state structure to initialize
- * @param[in] dev           cc110x device structure to setup
+ * @param[in] dev           cc430radio device structure to setup
  *
  * @return 1    on sucess
  * @return <=0  on error
  */
-int gnrc_netdev2_cc110x_init(gnrc_netdev2_t *gnrc_netdev2, netdev2_cc110x_t *dev);
+int gnrc_netdev2_cc430radio_init(gnrc_netdev2_t *gnrc_netdev2, netdev2_cc430radio_t *dev);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* GNRC_CC110X_H */
+#endif /* GNRC_CC430RADIO_H */
 /** @} */

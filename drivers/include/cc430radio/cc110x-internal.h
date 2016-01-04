@@ -9,18 +9,18 @@
  */
 
 /**
- * @ingroup     drivers_cc110x
+ * @ingroup     drivers_cc430radio
  * @{
  *
  * @file
- * @brief       Data structures and variables for the cc110x driver interface
+ * @brief       Data structures and variables for the cc430radio driver interface
  *
  * @author      Oliver Hahm <oliver.hahm@inria.fr>
  * @author      Kaspar Schleiser <kaspar@schleiser.de>
  */
 
-#ifndef CC110X_INTERNAL_H
-#define CC110X_INTERNAL_H
+#ifndef CC430RADIO_INTERNAL_H
+#define CC430RADIO_INTERNAL_H
 
 #include <stdint.h>
 
@@ -28,12 +28,12 @@
 extern "C" {
 #endif
 
-#define CC110X_RXBUF_SIZE           (2)
-#define CC110X_MAX_DATA_LENGTH      (58+64)
+#define CC430RADIO_RXBUF_SIZE           (2)
+#define CC430RADIO_MAX_DATA_LENGTH      (58+64)
 
-#define CC110X_HEADER_LENGTH        (3)     /**< Header covers SRC, DST and
+#define CC430RADIO_HEADER_LENGTH        (3)     /**< Header covers SRC, DST and
                                                  FLAGS */
-#define CC110X_BROADCAST_ADDRESS    (0x00)  /**< CC110X broadcast address */
+#define CC430RADIO_BROADCAST_ADDRESS    (0x00)  /**< CC430RADIO broadcast address */
 
 #define MIN_UID                     (0x01)  /**< Minimum UID of a node is
                                                  1 */
@@ -43,8 +43,8 @@ extern "C" {
 #define MIN_CHANNR                  (0)     /**< Minimum channel number */
 #define MAX_CHANNR                  (24)    /**< Maximum channel number */
 
-#define CC110X_PACKET_LENGTH        (0xFF)  /**< max packet length = 255b */
-#define CC110X_SYNC_WORD_TX_TIME    (90000) /**< loop count (max. timeout ~15ms)
+#define CC430RADIO_PACKET_LENGTH        (0xFF)  /**< max packet length = 255b */
+#define CC430RADIO_SYNC_WORD_TX_TIME    (90000) /**< loop count (max. timeout ~15ms)
                                                  to wait for sync word to be
                                                  transmitted (GDO2 from low to
                                                  high) */
@@ -54,11 +54,11 @@ extern "C" {
 #define IDLE_TO_RX_TIME             (122)   /**< Time chip needs to go to RX */
 #define CS_SO_WAIT_TIME             (488)   /**< Time to wait for SO to go low
                                                  after CS */
-#define CC110X_GDO1_LOW_RETRY       (100)   /**< Max. retries for SO to go low
+#define CC430RADIO_GDO1_LOW_RETRY       (100)   /**< Max. retries for SO to go low
                                                  after CS */
-#define CC110X_DEFAULT_CHANNEL      (0)     /**< The default channel number */
-#define CC110X_MIN_CHANNR           (0)     /**< lowest possible channel number */
-#define CC110X_MAX_CHANNR           (0)     /**< highest possible channel number */
+#define CC430RADIO_DEFAULT_CHANNEL      (0)     /**< The default channel number */
+#define CC430RADIO_MIN_CHANNR           (0)     /**< lowest possible channel number */
+#define CC430RADIO_MAX_CHANNR           (0)     /**< highest possible channel number */
 
 /**
  * @name    State values for state machine
@@ -75,12 +75,12 @@ enum {
 /** @} */
 
 /**
- * @brief array holding cc110x register values
+ * @brief array holding cc430radio register values
  */
-extern char cc110x_conf[];
+extern char cc430radio_conf[];
 
 /**
- * @brief   CC110X layer 0 protocol
+ * @brief   CC430RADIO layer 0 protocol
  *
  * <pre>
 ---------------------------------------------------
@@ -98,7 +98,7 @@ Flags:
           0 | Identification
 </pre>
 Notes:
-\li length & address are given by CC110X
+\li length & address are given by CC430RADIO
 \li Identification is increased is used to scan duplicates. It must be increased
     for each new packet and kept for packet retransmissions.
  */
@@ -108,22 +108,22 @@ typedef struct __attribute__((packed))
     uint8_t address;                        /**< Destination address */
     uint8_t phy_src;                        /**< Source address (physical source) */
     uint8_t flags;                          /**< Flags */
-    uint8_t data[CC110X_MAX_DATA_LENGTH];   /**< Data (high layer protocol) */
-} cc110x_pkt_t;
+    uint8_t data[CC430RADIO_MAX_DATA_LENGTH];   /**< Data (high layer protocol) */
+} cc430radio_pkt_t;
 
 /**
- * @brief struct holding cc110x packet + metadata
+ * @brief struct holding cc430radio packet + metadata
  */
 typedef struct {
     uint8_t rssi;                           /**< RSSI value */
     uint8_t lqi;                            /**< link quality indicator */
     uint8_t pos;                            /**< I have no clue. */
-    cc110x_pkt_t packet;                    /**< whole packet */
-} cc110x_pkt_buf_t;
+    cc430radio_pkt_t packet;                    /**< whole packet */
+} cc430radio_pkt_buf_t;
 
 /**
- * @brief enum for holding cc110x radio on/off state */
-enum cc110x_radio_mode {
+ * @brief enum for holding cc430radio radio on/off state */
+enum cc430radio_radio_mode {
     RADIO_MODE_GET  = -1,                   /**< leave mode unchanged */
     RADIO_MODE_OFF  = 0,                    /**< turn radio off */
     RADIO_MODE_ON   = 1                     /**< turn radio on */
@@ -172,15 +172,15 @@ typedef struct {
     uint8_t _FSCAL2;      /**< Frequency synthesizer calibration */
     uint8_t _FSCAL1;      /**< Frequency synthesizer calibration */
     uint8_t _FSCAL0;      /**< Frequency synthesizer calibration */
-} cc110x_reg_t;
+} cc430radio_reg_t;
 
 /**
  * @brief   CC110x radio configuration
  */
 typedef struct {
-    cc110x_reg_t reg_cfg;       /**< CC110X register configuration */
+    cc430radio_reg_t reg_cfg;       /**< CC430RADIO register configuration */
     uint8_t pa_power;           /**< Output power setting */
-} cc110x_cfg_t;
+} cc430radio_cfg_t;
 
 /**
  * @brief   Radio Control Flags
@@ -188,21 +188,21 @@ typedef struct {
 typedef struct {
     uint8_t  _RSSI;             /**< The RSSI value of last received packet */
     uint8_t  _LQI;              /**< The LQI value of the last received packet */
-} cc110x_flags_t;
+} cc430radio_flags_t;
 
 /**
  * @brief   Statistic interface for debugging
  */
-typedef struct cc110x_statistic {
+typedef struct cc430radio_statistic {
     uint32_t    packets_in;             /**< total nr of packets received */
     uint32_t    packets_in_crc_fail;    /**< dropped because of invalid crc */
     uint32_t    packets_in_while_tx;    /**< receive while tx */
     uint32_t    raw_packets_out;        /**< packets sent */
-} cc110x_statistic_t;
+} cc430radio_statistic_t;
 
 #ifdef __cplusplus
 }
 #endif
 
 /** @} */
-#endif /* CC110X_INTERNAL_H */
+#endif /* CC430RADIO_INTERNAL_H */

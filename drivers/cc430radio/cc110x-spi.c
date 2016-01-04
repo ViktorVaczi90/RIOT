@@ -8,7 +8,7 @@
  */
 
 /**
- * @ingroup     drivers_cc110x
+ * @ingroup     drivers_cc430radio
  * @{
  *
  * @file
@@ -24,10 +24,10 @@
 
 #include <stdio.h>
 
-#include "cc110x.h"
-#include "cc110x/cc110x-spi.h"
-#include "cc110x/cc110x-internal.h"
-#include "cc110x/cc110x-defines.h"
+#include "cc430radio.h"
+#include "cc430radio/cc430radio-spi.h"
+#include "cc430radio/cc430radio-internal.h"
+#include "cc430radio/cc430radio-defines.h"
 
 #include "periph/gpio.h"
 #include "periph/spi.h"
@@ -39,7 +39,7 @@
  *                      CC110x spi access
  **********************************************************************/
 
-void cc110x_cs(cc110x_t *dev)
+void cc430radio_cs(cc430radio_t *dev)
 {
     volatile int retry_count = 0;
     /* Switch MISO/GDO1 to GPIO input mode */
@@ -57,8 +57,8 @@ void cc110x_cs(cc110x_t *dev)
         if (gpio_read(dev->params.gdo1)) {
             retry_count++;
 
-            if (retry_count > CC110X_GDO1_LOW_RETRY) {
-                puts("[CC110X spi] fatal error\n");
+            if (retry_count > CC430RADIO_GDO1_LOW_RETRY) {
+                puts("[CC430RADIO spi] fatal error\n");
                 break;
             }
 
@@ -72,28 +72,28 @@ void cc110x_cs(cc110x_t *dev)
 #endif
 }
 
-void cc110x_writeburst_reg(cc110x_t *dev, uint8_t addr, const char *src, uint8_t count)
+void cc430radio_writeburst_reg(cc430radio_t *dev, uint8_t addr, const char *src, uint8_t count)
 {
     unsigned int cpsr;
     spi_acquire(dev->params.spi);
     cpsr = disableIRQ();
-    cc110x_cs(dev);
-    spi_transfer_regs(dev->params.spi, addr | CC110X_WRITE_BURST, (char *)src, 0, count);
+    cc430radio_cs(dev);
+    spi_transfer_regs(dev->params.spi, addr | CC430RADIO_WRITE_BURST, (char *)src, 0, count);
     gpio_set(dev->params.cs);
     restoreIRQ(cpsr);
     spi_release(dev->params.spi);
 }
 
-void cc110x_readburst_reg(cc110x_t *dev, uint8_t addr, char *buffer, uint8_t count)
+void cc430radio_readburst_reg(cc430radio_t *dev, uint8_t addr, char *buffer, uint8_t count)
 {
     int i = 0;
     unsigned int cpsr;
     spi_acquire(dev->params.spi);
     cpsr = disableIRQ();
-    cc110x_cs(dev);
-    spi_transfer_byte(dev->params.spi, addr | CC110X_READ_BURST, 0);
+    cc430radio_cs(dev);
+    spi_transfer_byte(dev->params.spi, addr | CC430RADIO_READ_BURST, 0);
     while (i < count) {
-        spi_transfer_byte(dev->params.spi, CC110X_NOBYTE, &buffer[i]);
+        spi_transfer_byte(dev->params.spi, CC430RADIO_NOBYTE, &buffer[i]);
         i++;
     }
     gpio_set(dev->params.cs);
@@ -101,56 +101,56 @@ void cc110x_readburst_reg(cc110x_t *dev, uint8_t addr, char *buffer, uint8_t cou
     spi_release(dev->params.spi);
 }
 
-void cc110x_write_reg(cc110x_t *dev, uint8_t addr, uint8_t value)
+void cc430radio_write_reg(cc430radio_t *dev, uint8_t addr, uint8_t value)
 {
     unsigned int cpsr;
     spi_acquire(dev->params.spi);
     cpsr = disableIRQ();
-    cc110x_cs(dev);
+    cc430radio_cs(dev);
     spi_transfer_reg(dev->params.spi, addr, value, 0);
     gpio_set(dev->params.cs);
     restoreIRQ(cpsr);
     spi_release(dev->params.spi);
 }
 
-uint8_t cc110x_read_reg(cc110x_t *dev, uint8_t addr)
+uint8_t cc430radio_read_reg(cc430radio_t *dev, uint8_t addr)
 {
     char result;
     unsigned int cpsr;
     spi_acquire(dev->params.spi);
     cpsr = disableIRQ();
-    cc110x_cs(dev);
-    spi_transfer_reg(dev->params.spi, addr | CC110X_READ_SINGLE, CC110X_NOBYTE, &result);
+    cc430radio_cs(dev);
+    spi_transfer_reg(dev->params.spi, addr | CC430RADIO_READ_SINGLE, CC430RADIO_NOBYTE, &result);
     gpio_set(dev->params.cs);
     restoreIRQ(cpsr);
     spi_release(dev->params.spi);
     return (uint8_t) result;
 }
 
-uint8_t cc110x_read_status(cc110x_t *dev, uint8_t addr)
+uint8_t cc430radio_read_status(cc430radio_t *dev, uint8_t addr)
 {
     char result;
     unsigned int cpsr;
     spi_acquire(dev->params.spi);
     cpsr = disableIRQ();
-    cc110x_cs(dev);
-    spi_transfer_reg(dev->params.spi, addr | CC110X_READ_BURST, CC110X_NOBYTE, &result);
+    cc430radio_cs(dev);
+    spi_transfer_reg(dev->params.spi, addr | CC430RADIO_READ_BURST, CC430RADIO_NOBYTE, &result);
     gpio_set(dev->params.cs);
     restoreIRQ(cpsr);
     spi_release(dev->params.spi);
     return (uint8_t) result;
 }
 
-uint8_t cc110x_get_reg_robust(cc110x_t *dev, uint8_t addr)
+uint8_t cc430radio_get_reg_robust(cc430radio_t *dev, uint8_t addr)
 {
     char result, result2;
     unsigned int cpsr;
     spi_acquire(dev->params.spi);
     cpsr = disableIRQ();
-    cc110x_cs(dev);
+    cc430radio_cs(dev);
     do {
-        spi_transfer_reg(dev->params.spi, addr | CC110X_READ_BURST, CC110X_NOBYTE, &result);
-        spi_transfer_reg(dev->params.spi, addr | CC110X_READ_BURST, CC110X_NOBYTE, &result2);
+        spi_transfer_reg(dev->params.spi, addr | CC430RADIO_READ_BURST, CC430RADIO_NOBYTE, &result);
+        spi_transfer_reg(dev->params.spi, addr | CC430RADIO_READ_BURST, CC430RADIO_NOBYTE, &result2);
     } while (result != result2);
     gpio_set(dev->params.cs);
     restoreIRQ(cpsr);
@@ -158,10 +158,10 @@ uint8_t cc110x_get_reg_robust(cc110x_t *dev, uint8_t addr)
     return (uint8_t) result;
 }
 
-uint8_t cc110x_strobe(cc110x_t *dev, uint8_t c)
+uint8_t cc430radio_strobe(cc430radio_t *dev, uint8_t c)
 {
-#ifdef CC110X_DONT_RESET
-    if (c == CC110X_SRES) {
+#ifdef CC430RADIO_DONT_RESET
+    if (c == CC430RADIO_SRES) {
         return 0;
     }
 #endif
@@ -170,7 +170,7 @@ uint8_t cc110x_strobe(cc110x_t *dev, uint8_t c)
     unsigned int cpsr;
     spi_acquire(dev->params.spi);
     cpsr = disableIRQ();
-    cc110x_cs(dev);
+    cc430radio_cs(dev);
     spi_transfer_byte(dev->params.spi, c, &result);
     gpio_set(dev->params.cs);
     restoreIRQ(cpsr);

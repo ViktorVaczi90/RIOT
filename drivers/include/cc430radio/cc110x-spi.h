@@ -9,19 +9,19 @@
  */
 
 /**
- * @ingroup     drivers_cc110x
+ * @ingroup     drivers_cc430radio
  * @{
  *
  * @file
- * @brief       CC110X SPI functions
+ * @brief       CC430RADIO SPI functions
  *
  * @author      Oliver Hahm <oliver.hahm@inria.fr>
  * @author      Fabian Nack <nack@inf.fu-berlin.de>
  * @author      Kaspar Schleiser <kaspar@schleiser.de>
  */
 
-#ifndef CC110X_SPI_H
-#define CC110X_SPI_H
+#ifndef CC430RADIO_SPI_H
+#define CC430RADIO_SPI_H
 
 #include <stdint.h>
 
@@ -37,7 +37,7 @@ extern "C" {
  * @param buffer    Data to be written
  * @param count     Size of data
  */
-void cc110x_writeburst_reg(cc110x_t *dev, uint8_t addr, const char *buffer, uint8_t count);
+void cc430radio_writeburst_reg(cc430radio_t *dev, uint8_t addr, const char *buffer, uint8_t count);
 
 /**
  * @brief Read a set of bytes using burst mode (if available)
@@ -47,7 +47,7 @@ void cc110x_writeburst_reg(cc110x_t *dev, uint8_t addr, const char *buffer, uint
  * @param buffer    Buffer to store read data
  * @param count     Size of data to be read
  */
-void cc110x_readburst_reg(cc110x_t *dev, uint8_t addr, char *buffer, uint8_t count);
+void cc430radio_readburst_reg(cc430radio_t *dev, uint8_t addr, char *buffer, uint8_t count);
 
 /**
  * @brief Write one byte to a register
@@ -56,7 +56,7 @@ void cc110x_readburst_reg(cc110x_t *dev, uint8_t addr, char *buffer, uint8_t cou
  * @param addr      Destinatoin register
  * @param value     New value
  */
-void cc110x_write_reg(cc110x_t *dev, uint8_t addr, uint8_t value);
+void cc430radio_write_reg(cc430radio_t *dev, uint8_t addr, uint8_t value);
 
 /**
  * @brief Read a byte from register
@@ -66,7 +66,7 @@ void cc110x_write_reg(cc110x_t *dev, uint8_t addr, uint8_t value);
  *
  * @return Read state and value of register
  */
-uint8_t cc110x_read_reg(cc110x_t *dev, uint8_t addr);
+uint8_t cc430radio_read_reg(cc430radio_t *dev, uint8_t addr);
 
 /**
  * @brief Read a byte from register, robust version
@@ -79,7 +79,7 @@ uint8_t cc110x_read_reg(cc110x_t *dev, uint8_t addr);
  *
  * @return Read state and value of register
  */
-uint8_t cc110x_get_reg_robust(cc110x_t *dev, uint8_t addr);
+uint8_t cc430radio_get_reg_robust(cc430radio_t *dev, uint8_t addr);
 
 /**
  * @brief Read state of a register
@@ -89,7 +89,7 @@ uint8_t cc110x_get_reg_robust(cc110x_t *dev, uint8_t addr);
  *
  * @return State of register
  */
-uint8_t cc110x_read_status(cc110x_t *dev, uint8_t addr);
+uint8_t cc430radio_read_status(cc430radio_t *dev, uint8_t addr);
 
 /**
  * @brief Sends a command strobe
@@ -99,18 +99,18 @@ uint8_t cc110x_read_status(cc110x_t *dev, uint8_t addr);
  *
  * @return Command response
  */
-uint8_t cc110x_strobe(cc110x_t *dev, uint8_t c);
+uint8_t cc430radio_strobe(cc430radio_t *dev, uint8_t c);
 
 /**
  * @brief Pull CS to low and wait for CC110x stabilization
  *
  * @param dev       Device to work on
  */
-void cc110x_cs(cc110x_t *dev);
+void cc430radio_cs(cc430radio_t *dev);
 
 #ifdef __cplusplus
 }
 #endif
 
 /** @} */
-#endif /* CC110X_SPI_H */
+#endif /* CC430RADIO_SPI_H */

@@ -1,3 +1,3 @@
-DIRS += gnrc_cc110x
+DIRS += gnrc_cc430radio
 
 include $(RIOTBASE)/Makefile.base
