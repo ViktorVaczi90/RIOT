@@ -45,7 +45,11 @@ void cc430radio_switch_to_pwd(cc430radio_t *dev);
 void cc430radio_switch_to_rx(cc430radio_t *dev);
 void cc430radio_wakeup_from_rx(cc430radio_t *dev);
 void cc430radio_write_register(cc430radio_t *dev, uint8_t r, uint8_t value);
-
+void turnOnGIE2Interrupt(void);
+void turnOffGIE2Interrupt(void);
+void CC430RADIOISR(void);
+void setupInterrupt(void* arg);
+/*static */void _netdev2_cc430radio_isr(void *arg);
 extern const char cc430radio_default_conf[];
 extern const uint8_t cc430radio_default_conf_size;
 extern const uint8_t cc430radio_pa_table[];

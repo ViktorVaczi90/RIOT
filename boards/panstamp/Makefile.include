@@ -1,7 +1,7 @@
 ## the cpu to build for
 export CPU = cc430
 export CPU_MODEL = cc430f5137
-
+USEMODULE += cc430radio gnrc_netdev2 gnrc_cc430radio
 # flasher configuration
 export OFLAGS = -O ihex
 export FLASHER =java -jar ~/.arduino15/packages/panstamp_nrg/tools/java-bsl/1.0.0/BsLoader.jar

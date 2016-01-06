@@ -29,7 +29,7 @@
 #include "cc430radio/cc430radio-interface.h"
 #include "cc430radio/cc430radio-defines.h"
 
-#include "periph/gpio.h"
+//#include "periph/gpio.h"
 #include "irq.h"
 
 #include "kernel_types.h"
@@ -43,9 +43,10 @@
 #define ENABLE_DEBUG (0)
 #include "debug.h"
 
+#include "cc430f5137.h"
 static void _rx_abort(cc430radio_t *dev)
 {
-    gpio_irq_disable(dev->params.gdo2);
+    turnOffGIE2Interrupt();
 
     cc430radio_strobe(dev, CC430RADIO_SIDLE);    /* Switch to IDLE (should already be)... */
     cc430radio_strobe(dev, CC430RADIO_SFRX);     /* ...for flushing the RX FIFO */
@@ -60,9 +61,9 @@ static void _rx_start(cc430radio_t *dev)
     cc430radio_pkt_buf_t *pkt_buf = &dev->pkt_buf;
     pkt_buf->pos = 0;
 
-    gpio_irq_disable(dev->params.gdo2);
+    turnOffGIE2Interrupt();
     cc430radio_write_reg(dev, CC430RADIO_IOCFG2, 0x01);
-    gpio_irq_enable(dev->params.gdo2);
+    turnOnGIE2Interrupt();
 }
 
 static void _rx_read_data(cc430radio_t *dev, void(*callback)(void*), void*arg)
@@ -76,7 +77,7 @@ static void _rx_read_data(cc430radio_t *dev, void(*callback)(void*), void*arg)
     }
 
     if (!fifo) {
-        gpio_irq_enable(dev->params.gdo2);
+        turnOnGIE2Interrupt();
         return;
     }
 
@@ -148,12 +149,12 @@ static void _rx_continue(cc430radio_t *dev, void(*callback)(void*), void*arg)
         return;
     }
 
-    gpio_irq_disable(dev->params.gdo2);
+    turnOffGIE2Interrupt();
 
     do {
         _rx_read_data(dev, callback, arg);
     }
-    while (gpio_read(dev->params.gdo2));
+    while (PKTSTATUS | BIT2);
 }
 
 static void _tx_abort(cc430radio_t *dev)
@@ -163,7 +164,7 @@ static void _tx_abort(cc430radio_t *dev)
 
 static void _tx_continue(cc430radio_t *dev)
 {
-    gpio_irq_disable(dev->params.gdo2);
+    turnOffGIE2Interrupt();
 
     cc430radio_pkt_t *pkt = &dev->pkt_buf.packet;
     int size = pkt->length + 1;
@@ -205,13 +206,13 @@ static void _tx_continue(cc430radio_t *dev)
 
     if (to_send < left) {
         /* set GDO2 to 0x2 -> will deassert at TX FIFO below threshold */
-        gpio_irq_enable(dev->params.gdo2);
+        turnOnGIE2Interrupt();
         cc430radio_write_reg(dev, CC430RADIO_IOCFG2, 0x02);
     }
     else {
         /* set GDO2 to 0x6 -> will deassert at packet end */
         cc430radio_write_reg(dev, CC430RADIO_IOCFG2, 0x06);
-        gpio_irq_enable(dev->params.gdo2);
+        turnOnGIE2Interrupt();
     }
 }
 
@@ -219,7 +220,7 @@ void cc430radio_isr_handler(cc430radio_t *dev, void(*callback)(void*), void*arg)
 {
     switch (dev->radio_state) {
         case RADIO_RX:
-            if (gpio_read(dev->params.gdo2)) {
+            if (PKTSTATUS | BIT2) {
                 _rx_start(dev);
             }
             else {
@@ -231,7 +232,7 @@ void cc430radio_isr_handler(cc430radio_t *dev, void(*callback)(void*), void*arg)
             _rx_continue(dev, callback, arg);
             break;
         case RADIO_TX_BUSY:
-            if (!gpio_read(dev->params.gdo2)) {
+            if (!(PKTSTATUS | BIT2)) {
                 _tx_continue(dev);
             }
             else {
@@ -275,7 +276,7 @@ int cc430radio_send(cc430radio_t *dev, cc430radio_pkt_t *packet)
     packet->phy_src = dev->radio_address;
 
     /* Disable RX interrupt */
-    gpio_irq_disable(dev->params.gdo2);
+    turnOffGIE2Interrupt();
     dev->radio_state = RADIO_TX_BUSY;
 
 #ifdef MODULE_CC430RADIO_HOOKS

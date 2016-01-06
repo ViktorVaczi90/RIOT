@@ -30,7 +30,7 @@
 #include "net/eui64.h"
 
 #include "periph/cpuid.h"
-#include "periph/gpio.h"
+//#include "periph/gpio.h"
 #include "net/netdev2.h"
 #include "net/gnrc/nettype.h"
 
@@ -162,7 +162,7 @@ static int _set(netdev2_t *dev, netopt_t opt, void *value, size_t value_len)
     return 0;
 }
 
-static void _netdev2_cc430radio_isr(void *arg)
+/*static*/ void _netdev2_cc430radio_isr(void *arg)
 {
     netdev2_t *netdev2 = (netdev2_t*) arg;
     netdev2->event_callback(netdev2, NETDEV2_EVENT_ISR, netdev2->isr_arg);
@@ -171,8 +171,8 @@ static void _netdev2_cc430radio_isr(void *arg)
 static void _netdev2_cc430radio_rx_callback(void *arg)
 {
     netdev2_t *netdev2 = (netdev2_t*) arg;
-    cc430radio_t *cc430radio = &((netdev2_cc430radio_t*) arg)->cc430radio;
-    gpio_irq_disable(cc430radio->params.gdo2);
+    //cc430radio_t *cc430radio = &((netdev2_cc430radio_t*) arg)->cc430radio;
+    turnOffGIE2Interrupt();
     netdev2->event_callback(netdev2, NETDEV2_EVENT_RX_COMPLETE, netdev2->isr_arg);
 }
 
@@ -185,15 +185,16 @@ static void _isr(netdev2_t *dev)
 static int _init(netdev2_t *dev)
 {
     DEBUG("%s:%u\n", __func__, __LINE__);
-
+	setupInterrupt((void*)dev);
+	
     cc430radio_t *cc430radio = &((netdev2_cc430radio_t*) dev)->cc430radio;
-
+	/*
     gpio_init_int(cc430radio->params.gdo2, GPIO_NOPULL, GPIO_BOTH,
             &_netdev2_cc430radio_isr, (void*)dev);
 
     gpio_set(cc430radio->params.gdo2);
-    gpio_irq_disable(cc430radio->params.gdo2);
-
+    turnOffGIE2Interrupt();
+*/
     /* Switch to RX mode */
     cc430radio_rd_set_mode(cc430radio, RADIO_MODE_ON);
 

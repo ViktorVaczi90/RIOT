@@ -163,6 +163,11 @@ void auto_init(void)
     auto_init_cc110x();
 #endif
 
+#ifdef MODULE_CC430RADIO
+    extern void auto_init_cc430radio(void);
+    auto_init_cc430radio();
+#endif
+
 #ifdef MODULE_XBEE
     extern void auto_init_xbee(void);
     auto_init_xbee();
@@ -183,8 +188,5 @@ void auto_init(void)
 #ifdef MODULE_GNRC_IPV6_NETIF
     gnrc_ipv6_netif_init_by_dev();
 #endif
-#ifdef MODULE_CC430RADIO
-    extern void auto_init_cc430radio(void);
-    auto_init_cc430radio();
-#endif
+
 }
